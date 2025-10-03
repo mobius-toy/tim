@@ -49,8 +49,8 @@ android {
     }
 
     dependencies {
-        // 使用新的分发仓库提供的 opentoy_android
-        implementation 'com.github.mobius-toy:opentoy_android_distribute:1.0.4'
+        // 暂时使用本地 AAR 文件，直到 JitPack 构建问题解决
+        implementation files('libs/opentoy_android-release-v1.0.0.aar')
         
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
