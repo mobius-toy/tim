@@ -49,8 +49,8 @@ android {
     }
 
     dependencies {
-        // 暂时使用本地 AAR 文件，直到 JitPack 构建问题解决
-        implementation files('libs/opentoy_android-release-v1.0.0.aar')
+        // 使用 api 依赖而不是 implementation 依赖
+        api files('libs/opentoy_android-release-v1.0.0.aar')
         
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
