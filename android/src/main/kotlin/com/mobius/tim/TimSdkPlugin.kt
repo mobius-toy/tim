@@ -110,9 +110,26 @@ class TimSdkPlugin :
     }
 
     private fun handleOpenToyResult(openToyResult: OpenToyResult, result: Result) {
-        when (openToyResult) {
-            is com.mobius.opentoy.OpenToyResult.Success -> result.success(openToyResult.value)
-            is com.mobius.opentoy.OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", openToyResult.error.message, null)
+        // 使用反射来处理 OpenToyResult
+        val className = openToyResult.javaClass.simpleName
+        when (className) {
+            "Success" -> {
+                // 获取 value 属性
+                val valueField = openToyResult.javaClass.getDeclaredField("value")
+                valueField.isAccessible = true
+                val value = valueField.get(openToyResult)
+                result.success(value)
+            }
+            "Failure" -> {
+                // 获取 error 属性
+                val errorField = openToyResult.javaClass.getDeclaredField("error")
+                errorField.isAccessible = true
+                val error = errorField.get(openToyResult) as Exception
+                result.error("BLUETOOTH_ERROR", error.message, null)
+            }
+            else -> {
+                result.error("BLUETOOTH_ERROR", "Unknown result type: $className", null)
+            }
         }
     }
 
