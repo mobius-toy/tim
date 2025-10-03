@@ -50,38 +50,22 @@ class TimSdkPlugin :
             // 蓝牙相关方法
             "initializeBluetooth" -> {
                 val bluetoothResult = openToyAndroid.initializeBluetooth()
-                when {
-                    bluetoothResult is OpenToyResult.Success -> result.success(bluetoothResult.value)
-                    bluetoothResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", bluetoothResult.error.message, null)
-                    else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                }
+                handleOpenToyResult(bluetoothResult, result)
             }
             "startScan" -> {
                 val scanResult = openToyAndroid.startScan()
-                when {
-                    scanResult is OpenToyResult.Success -> result.success(scanResult.value)
-                    scanResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", scanResult.error.message, null)
-                    else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                }
+                handleOpenToyResult(scanResult, result)
             }
             "stopScan" -> {
                 val stopResult = openToyAndroid.stopScan()
-                when {
-                    stopResult is OpenToyResult.Success -> result.success(stopResult.value)
-                    stopResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", stopResult.error.message, null)
-                    else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                }
+                handleOpenToyResult(stopResult, result)
             }
             "connectToDevice" -> {
                 val args = call.arguments as? Map<String, Any>
                 val deviceId = args?.get("deviceId") as? String
                 if (deviceId != null) {
                     val connectResult = openToyAndroid.connectToDevice(deviceId)
-                    when {
-                        connectResult is OpenToyResult.Success -> result.success(connectResult.value)
-                        connectResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", connectResult.error.message, null)
-                        else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                    }
+                    handleOpenToyResult(connectResult, result)
                 } else {
                     result.error("INVALID_ARGUMENTS", "deviceId is required", null)
                 }
@@ -91,11 +75,7 @@ class TimSdkPlugin :
                 val deviceId = args?.get("deviceId") as? String
                 if (deviceId != null) {
                     val disconnectResult = openToyAndroid.disconnectFromDevice(deviceId)
-                    when {
-                        disconnectResult is OpenToyResult.Success -> result.success(disconnectResult.value)
-                        disconnectResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", disconnectResult.error.message, null)
-                        else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                    }
+                    handleOpenToyResult(disconnectResult, result)
                 } else {
                     result.error("INVALID_ARGUMENTS", "deviceId is required", null)
                 }
@@ -105,11 +85,7 @@ class TimSdkPlugin :
                 val deviceId = args?.get("deviceId") as? String
                 if (deviceId != null) {
                     openToyAndroid.readBatteryLevel(deviceId) { batteryResult ->
-                        when {
-                            batteryResult is OpenToyResult.Success -> result.success(batteryResult.value)
-                            batteryResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", batteryResult.error.message, null)
-                            else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                        }
+                        handleOpenToyResult(batteryResult, result)
                     }
                 } else {
                     result.error("INVALID_ARGUMENTS", "deviceId is required", null)
@@ -121,11 +97,7 @@ class TimSdkPlugin :
                 val pwm = args?.get("pwm") as? List<Int>
                 if (deviceId != null && pwm != null) {
                     openToyAndroid.writeMotor(deviceId, pwm) { motorResult ->
-                        when {
-                            motorResult is OpenToyResult.Success -> result.success(motorResult.value)
-                            motorResult is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", motorResult.error.message, null)
-                            else -> result.error("BLUETOOTH_ERROR", "Unknown error", null)
-                        }
+                        handleOpenToyResult(motorResult, result)
                     }
                 } else {
                     result.error("INVALID_ARGUMENTS", "deviceId and pwm are required", null)
@@ -134,6 +106,13 @@ class TimSdkPlugin :
             else -> {
                 result.notImplemented()
             }
+        }
+    }
+
+    private fun handleOpenToyResult(openToyResult: OpenToyResult, result: Result) {
+        when (openToyResult) {
+            is OpenToyResult.Success -> result.success(openToyResult.value)
+            is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", openToyResult.error.message, null)
         }
     }
 
