@@ -3,7 +3,7 @@
 [![pub package](https://img.shields.io/pub/v/tim.svg)](https://pub.dev/packages/tim)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-一个 Flutter 插件，提供蓝牙低功耗 (BLE) 功能，用于连接和控制玩具设备。
+A Flutter plugin for Bluetooth Low Energy (BLE) communication with toy devices, integrated with OpenToy Android Library via JitPack.
 
 ## 📦 安装
 
@@ -13,7 +13,7 @@
 dependencies:
   tim:
     git:
-      url: https://github.com/heymarcusday/tim_sdk.git
+      url: https://github.com/mobius-toy/tim.git
 ```
 
 然后运行：
@@ -89,7 +89,7 @@ TIM SDK 默认使用 JitPack 自动获取 OpenToy Android Library 依赖，无�
 
 ```gradle
 dependencies {
-    implementation 'com.github.mobius-toy:opentoy_android:1.0.0'  // 修改为所需版本
+    implementation 'com.github.mobius-toy:opentoy_android_distribute:1.0.0'  // 修改为所需版本
 }
 ```
 
@@ -98,7 +98,7 @@ dependencies {
 ### 基本用法
 
 ```dart
-import 'package:tim/tim.dart';
+import 'package:tim/tim.dart'
 
 // 获取 TIM 实例
 final tim = Tim.instance;
