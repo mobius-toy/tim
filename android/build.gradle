@@ -18,6 +18,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -48,6 +49,9 @@ android {
     }
 
     dependencies {
+        // 使用 JitPack 集成 opentoy_android
+        implementation 'com.github.mobius-toy:opentoy_android:1.0.0'
+        
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
     }

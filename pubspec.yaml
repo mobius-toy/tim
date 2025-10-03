@@ -1,7 +1,7 @@
 name: tim
-description: "A new Flutter plugin project."
-version: 0.0.2
-homepage:
+description: "A Flutter plugin for Bluetooth Low Energy (BLE) communication with toy devices, integrated with OpenToy Android Library via JitPack."
+version: 0.0.3
+homepage: https://github.com/mobius-toy/tim_sdk
 
 environment:
   sdk: ^3.9.2

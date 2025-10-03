@@ -77,6 +77,21 @@ https://developer.android.com/about/versions/12/features/bluetooth-permissions -
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28" />
 ```
 
+## 📦 依赖集成
+
+TIM SDK 通过 JitPack 自动集成 OpenToy Android Library，无需手动配置。
+
+### 自动集成（推荐）
+TIM SDK 默认使用 JitPack 自动获取 OpenToy Android Library 依赖，无需任何额外配置。
+
+### 手动集成（可选）
+如果需要使用特定版本的 OpenToy Android Library，请在 `android/build.gradle` 中修改依赖版本：
+
+```gradle
+dependencies {
+    implementation 'com.github.mobius-toy:opentoy_android:1.0.0'  // 修改为所需版本
+}
+```
 
 ## 🚀 快速开始
 
