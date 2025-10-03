@@ -111,8 +111,8 @@ class TimSdkPlugin :
 
     private fun handleOpenToyResult(openToyResult: OpenToyResult, result: Result) {
         when (openToyResult) {
-            is OpenToyResult.Success -> result.success(openToyResult.value)
-            is OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", openToyResult.error.message, null)
+            is com.mobius.opentoy.OpenToyResult.Success -> result.success(openToyResult.value)
+            is com.mobius.opentoy.OpenToyResult.Failure -> result.error("BLUETOOTH_ERROR", openToyResult.error.message, null)
         }
     }
 
