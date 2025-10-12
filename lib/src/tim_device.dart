@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'ble/ble_device_base.dart';
+import 'tim_exception.dart';
 
-class TimDevice with BaseBleDevice {
-  // Toy information
+abstract class TimDevice with BaseBleDevice {
   late final String id;
   late final String name;
   late final String mac;
@@ -20,16 +20,27 @@ class TimDevice with BaseBleDevice {
   late int batteryValue;
   Stream<int> get battery => batteryController.stream;
 
-  @override
+  TimDisconnectReason? get disconnectReason;
+
+  Future<void> connect({
+    Duration timeout = const Duration(seconds: 5),
+  });
+
+  Future<void> disconnect();
+
+  Future<void> writeMotor(List<int> pwmValues);
+
+  Future<void> writeMotorStop();
+
   Future ota({
     required String platform,
     required String remoteID,
     required String filepath,
     required ValueChanged<double> onProgress,
-  });
+  }) => throw UnimplementedError();
 
   @override
   String toString() {
-    return '$name $id';
+    return 'TIM device $name $id';
   }
 }

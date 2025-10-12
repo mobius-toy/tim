@@ -10,7 +10,7 @@ import '../utils/logger.dart';
 
 /// 设备级隔离的蓝牙设备
 /// 继承自 BleDevice，实现设备级队列管理和异步任务处理
-class BleDevice<T> extends TimDevice {
+final class BleDevice<T> extends TimDevice {
   late final BluetoothDevice _device;
 
   @protected
@@ -46,7 +46,6 @@ class BleDevice<T> extends TimDevice {
   /// 初始化设备
   @override
   Future<void> init() async {
-    await super.init();
     try {
       Logger.i('$id connected, initializing...');
       await _discoverServices();
@@ -149,9 +148,11 @@ class BleDevice<T> extends TimDevice {
     }
   }
 
-  /// 连接设备
   @override
-  Future<void> connect({
+  Future<void> connect({Duration timeout = const Duration(seconds: 5)}) => _connect(timeout: timeout);
+
+  /// 连接设备
+  Future<void> _connect({
     Duration timeout = const Duration(seconds: 5),
     int? mtu = 512,
     bool autoConnect = false,
