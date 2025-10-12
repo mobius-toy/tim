@@ -22,11 +22,11 @@ into the `jniLibs` source set automatically. To update to a new release, bump
 ### iOS / macOS
 
 Both `ios/tim.podspec` and `macos/tim.podspec` download the published static
-library during `pod install`. By default they use the same version (`0.1.0`),
+library during `pod install`. By default they use the same version (`0.0.1`),
 but you can override it via the `TIM_FRB_VERSION` environment variable:
 
 ```bash
-TIM_FRB_VERSION=0.1.0 pod install
+TIM_FRB_VERSION=0.0.1 pod install
 ```
 
 The prepare step creates `Frameworks/libtim_frb.a` (for iOS it merges device

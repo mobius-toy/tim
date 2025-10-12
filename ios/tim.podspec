@@ -2,7 +2,7 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint tim.podspec` to validate before publishing.
 #
-tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.1.0'
+tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.0.1'
 tim_frb_archive = "tim_frb-artifacts-v#{tim_frb_version}.zip"
 tim_frb_url = "https://github.com/mobius-toy/tim_artifacts/releases/download/v#{tim_frb_version}/#{tim_frb_archive}"
 artifacts_dir = '${PODS_TARGET_SRCROOT}/Frameworks'
