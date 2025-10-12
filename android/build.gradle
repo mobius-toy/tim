@@ -1,6 +1,13 @@
 group = "com.mobius.tim"
 version = "1.0-SNAPSHOT"
 
+def timFrbVersion = project.findProperty("timFrbVersion") ?: "0.1.0"
+def timFrbArchiveName = "tim_frb-artifacts-v${timFrbVersion}.zip"
+def timFrbDownloadUrl = "https://github.com/mobius-toy/tim_artifacts/releases/download/v${timFrbVersion}/${timFrbArchiveName}"
+def timFrbWorkDir = new File(buildDir, "timFrb")
+def timFrbArchive = new File(timFrbWorkDir, timFrbArchiveName)
+def timFrbJniLibsDir = new File(timFrbWorkDir, "jniLibs")
+
 buildscript {
     ext.kotlin_version = "2.1.0"
     repositories {
@@ -41,6 +48,7 @@ android {
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
         test.java.srcDirs += "src/test/kotlin"
+        main.jniLibs.srcDir timFrbJniLibsDir
     }
 
     defaultConfig {
@@ -63,4 +71,32 @@ android {
             }
         }
     }
+}
+
+tasks.register("fetchTimFrbArtifacts") {
+    outputs.dir timFrbJniLibsDir
+    doLast {
+        timFrbWorkDir.mkdirs()
+
+        if (!timFrbArchive.exists()) {
+            logger.lifecycle("Downloading tim_frb artifacts ${timFrbArchiveName} from ${timFrbDownloadUrl}")
+            ant.get(src: timFrbDownloadUrl, dest: timFrbArchive)
+        }
+
+        delete timFrbJniLibsDir
+        copy {
+            from(zipTree(timFrbArchive)) {
+                include "android/**"
+            }
+            into timFrbJniLibsDir
+            includeEmptyDirs = false
+            eachFile { details ->
+                details.path = details.path.replaceFirst("android/", "")
+            }
+        }
+    }
+}
+
+tasks.matching { it.name == "preBuild" }.configureEach {
+    dependsOn("fetchTimFrbArtifacts")
 }

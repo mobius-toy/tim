@@ -2,6 +2,11 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint tim.podspec` to validate before publishing.
 #
+tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.1.0'
+tim_frb_archive = "tim_frb-artifacts-v#{tim_frb_version}.zip"
+tim_frb_url = "https://github.com/mobius-toy/tim_artifacts/releases/download/v#{tim_frb_version}/#{tim_frb_archive}"
+artifacts_dir = '${PODS_TARGET_SRCROOT}/Frameworks'
+
 Pod::Spec.new do |s|
   s.name             = 'tim'
   s.version          = '0.0.1'
@@ -20,6 +25,28 @@ A new Flutter plugin project.
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
+
+  s.prepare_command = <<-CMD
+    set -e
+    ARTIFACTS_DIR="#{artifacts_dir}"
+    ARCHIVE_NAME="#{tim_frb_archive}"
+    URL="#{tim_frb_url}"
+
+    rm -rf "${ARTIFACTS_DIR}"
+    mkdir -p "${ARTIFACTS_DIR}"
+
+    curl -L -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "${URL}"
+    unzip -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "iphoneos/release/libtim_frb.a" "iphonesimulator/release/libtim_frb.a" -d "${ARTIFACTS_DIR}"
+
+    lipo -create "${ARTIFACTS_DIR}/iphoneos/release/libtim_frb.a" \
+                 "${ARTIFACTS_DIR}/iphonesimulator/release/libtim_frb.a" \
+                 -output "${ARTIFACTS_DIR}/libtim_frb.a"
+
+    rm -rf "${ARTIFACTS_DIR}/iphoneos" "${ARTIFACTS_DIR}/iphonesimulator"
+    rm -f "${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
+  CMD
+
+  s.vendored_libraries = 'Frameworks/libtim_frb.a'
 
   # If your plugin requires a privacy manifest, for example if it uses any
   # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your

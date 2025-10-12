@@ -31,3 +31,7 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 /build/
 /coverage/
+android/build/
+android/src/main/jniLibs/
+ios/Frameworks/
+macos/Frameworks/

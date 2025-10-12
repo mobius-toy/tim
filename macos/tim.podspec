@@ -2,6 +2,11 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint tim.podspec` to validate before publishing.
 #
+tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.1.0'
+tim_frb_archive = "tim_frb-artifacts-v#{tim_frb_version}.zip"
+tim_frb_url = "https://github.com/mobius-toy/tim_artifacts/releases/download/v#{tim_frb_version}/#{tim_frb_archive}"
+artifacts_dir = '${PODS_TARGET_SRCROOT}/Frameworks'
+
 Pod::Spec.new do |s|
   s.name             = 'tim'
   s.version          = '0.0.1'
@@ -27,4 +32,23 @@ A new Flutter plugin project.
   s.platform = :osx, '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+
+  s.prepare_command = <<-CMD
+    set -e
+    ARTIFACTS_DIR="#{artifacts_dir}"
+    ARCHIVE_NAME="#{tim_frb_archive}"
+    URL="#{tim_frb_url}"
+
+    rm -rf "${ARTIFACTS_DIR}"
+    mkdir -p "${ARTIFACTS_DIR}"
+
+    curl -L -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "${URL}"
+    unzip -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "macosx/release/libtim_frb.a" -d "${ARTIFACTS_DIR}"
+    mv "${ARTIFACTS_DIR}/macosx/release/libtim_frb.a" "${ARTIFACTS_DIR}/libtim_frb.a"
+
+    rm -rf "${ARTIFACTS_DIR}/macosx"
+    rm -f "${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
+  CMD
+
+  s.vendored_libraries = 'Frameworks/libtim_frb.a'
 end
