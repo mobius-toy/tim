@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'ble/ble_device.dart';
 import 'rust/api/ble.dart';
 import 'tim_exception.dart';
@@ -36,7 +37,13 @@ class TimService {
     FlutterBluePlus.setLogLevel(LogLevel.none);
     _listenAdapterState();
 
-    await RustLib.init();
+    ExternalLibrary? externalLibrary;
+    if (Platform.isIOS || Platform.isMacOS) {
+      externalLibrary = ExternalLibrary.process(iKnowHowToUseIt: true);
+    }
+
+    await RustLib.init(externalLibrary: externalLibrary);
+
     initDeviceRegistry();
 
     _initialized = true;

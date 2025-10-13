@@ -5,7 +5,6 @@
 tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.0.1'
 tim_frb_archive = "tim_frb-artifacts-v#{tim_frb_version}.zip"
 tim_frb_url = "https://github.com/mobius-toy/tim_artifacts/releases/download/v#{tim_frb_version}/#{tim_frb_archive}"
-artifacts_dir = '${PODS_TARGET_SRCROOT}/Frameworks'
 
 Pod::Spec.new do |s|
   s.name             = 'tim'
@@ -17,6 +16,7 @@ A new Flutter plugin project.
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
+
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
@@ -26,27 +26,44 @@ A new Flutter plugin project.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
 
-  s.prepare_command = <<-CMD
-    set -e
-    ARTIFACTS_DIR="#{artifacts_dir}"
-    ARCHIVE_NAME="#{tim_frb_archive}"
-    URL="#{tim_frb_url}"
+  s.script_phase = {
+    :name => 'Fetch TIM FRB artifacts',
+    :execution_position => :before_compile,
+    :script => <<~SCRIPT,
+      set -euo pipefail
 
-    rm -rf "${ARTIFACTS_DIR}"
-    mkdir -p "${ARTIFACTS_DIR}"
+      ARCHIVE_NAME="#{tim_frb_archive}"
+      URL="#{tim_frb_url}"
+      ARTIFACTS_DIR="${BUILT_PRODUCTS_DIR}"
+      TARGET_LIB="${ARTIFACTS_DIR}/libtim_frb.a"
+      TEMP_ZIP="${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
+      UNPACK_DIR="${ARTIFACTS_DIR}/tim_frb_unpack"
 
-    curl -L -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "${URL}"
-    unzip -o "${ARTIFACTS_DIR}/${ARCHIVE_NAME}" "iphoneos/release/libtim_frb.a" "iphonesimulator/release/libtim_frb.a" -d "${ARTIFACTS_DIR}"
+      if [ ! -f "${TARGET_LIB}" ]; then
+        echo "Downloading TIM artifacts to ${TARGET_LIB}"
+        mkdir -p "${ARTIFACTS_DIR}"
+        curl -L -o "${TEMP_ZIP}" "${URL}"
+        rm -rf "${UNPACK_DIR}"
+        mkdir -p "${UNPACK_DIR}"
+        unzip -o "${TEMP_ZIP}" -d "${UNPACK_DIR}"
+        EXPECTED_LIB="${UNPACK_DIR}/artifacts/iphoneos/release/libtim_frb.a"
+        if [ ! -f "${EXPECTED_LIB}" ]; then
+          echo "Error: "${EXPECTED_LIB}" not found inside artifacts archive"
+          exit 1
+        fi
+        cp "${EXPECTED_LIB}" "${TARGET_LIB}"
+        rm -rf "${UNPACK_DIR}"
+        rm -f "${TEMP_ZIP}"
+      fi
+    SCRIPT
+    :output_files => ["${BUILT_PRODUCTS_DIR}/libtim_frb.a"],
+  }
 
-    lipo -create "${ARTIFACTS_DIR}/iphoneos/release/libtim_frb.a" \
-                 "${ARTIFACTS_DIR}/iphonesimulator/release/libtim_frb.a" \
-                 -output "${ARTIFACTS_DIR}/libtim_frb.a"
-
-    rm -rf "${ARTIFACTS_DIR}/iphoneos" "${ARTIFACTS_DIR}/iphonesimulator"
-    rm -f "${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
-  CMD
-
-  s.vendored_libraries = 'Frameworks/libtim_frb.a'
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',
+    'OTHER_LDFLAGS' => '-force_load ${BUILT_PRODUCTS_DIR}/libtim_frb.a',
+  }
 
   # If your plugin requires a privacy manifest, for example if it uses any
   # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
