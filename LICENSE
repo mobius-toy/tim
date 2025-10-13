@@ -1,1 +1,49 @@
-TODO: Add your license here.
+TIM SDK DUAL LICENSE
+
+Copyright (c) 2024 Mobius Toy
+
+This software is dual-licensed under the following terms:
+
+## OPEN SOURCE LICENSE (MIT)
+For personal, educational, and non-commercial use:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## COMMERCIAL LICENSE
+For commercial use, enterprise deployment, or revenue-generating applications:
+
+Commercial use of this software requires a separate commercial license.
+Please contact licensing@mobiustoy.com for commercial licensing terms.
+
+Commercial license includes:
+- Commercial use rights
+- Technical support
+- Priority updates
+- Custom development services
+- Enterprise features
+
+## RESTRICTIONS
+The following uses are prohibited without a commercial license:
+- Commercial applications
+- Revenue-generating software
+- Enterprise deployments
+- OEM integrations
+- Resale or redistribution for profit
+
+For licensing inquiries, visit: https://mobiustoy.com/licensing

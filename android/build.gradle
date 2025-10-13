@@ -34,7 +34,9 @@ apply plugin: "kotlin-android"
 android {
     namespace = "com.mobius.tim"
 
-    compileSdk = 36
+    compileSdk = project.hasProperty('flutter.compileSdkVersion') 
+        ? flutter.compileSdkVersion 
+        : 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -86,12 +88,20 @@ tasks.register("fetchTimFrbArtifacts") {
         delete timFrbJniLibsDir
         copy {
             from(zipTree(timFrbArchive)) {
-                include "android/**"
+                include "**/android/**"
             }
             into timFrbJniLibsDir
             includeEmptyDirs = false
             eachFile { details ->
-                details.path = details.path.replaceFirst("android/", "")
+                def marker = "android/"
+                def idx = details.path.indexOf(marker)
+                if (idx >= 0) {
+                    if (details.isDirectory()) {
+                        details.exclude()
+                    } else {
+                        details.path = details.path.substring(idx + marker.length())
+                    }
+                }
             }
         }
     }
