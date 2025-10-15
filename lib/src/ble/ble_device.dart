@@ -50,12 +50,12 @@ final class BleDevice<T> extends TimDevice {
   @override
   Future<void> init() async {
     try {
-      Logger.i('$id connected, initializing...');
+      Logger.i('Device $simpleId connected, initializing...');
       await _discoverServices();
       await _initDeviceTaskStream();
       await _initDeviceInfo();
     } catch (e, s) {
-      Logger.e('$id initialization failed, $e, $s');
+      Logger.e('Device $simpleId initialization failed, $e, $s');
       throw TimException.fromException(e);
     }
   }
@@ -63,7 +63,7 @@ final class BleDevice<T> extends TimDevice {
   /// 发现蓝牙服务
   Future<void> _discoverServices() async {
     try {
-      Logger.i('$id discovering services...');
+      Logger.i('Device $simpleId discovering services...');
       final discoveredServices = await _device.discoverServices();
 
       for (final service in discoveredServices) {
@@ -74,9 +74,9 @@ final class BleDevice<T> extends TimDevice {
         }
       }
 
-      Logger.i('$id discovered ${services.length} services and ${characteristics.length} characteristics');
+      Logger.i('Device $simpleId discovered ${services.length} services and ${characteristics.length} characteristics');
     } catch (e) {
-      Logger.e('$id service discovery failed: $e');
+      Logger.e('Device $simpleId service discovery failed: $e');
       rethrow;
     }
   }
@@ -88,9 +88,9 @@ final class BleDevice<T> extends TimDevice {
     try {
       final taskStreamSink = createDeviceTaskStream(deviceId: id, deviceName: name);
       _taskSubscription = taskStreamSink.listen(_handleDeviceTask);
-      Logger.i('Device $id internal init');
+      Logger.i('Device $simpleId internal init');
     } catch (e) {
-      Logger.e('Device $id queue initialization failed: $e');
+      Logger.e('Device $simpleId queue initialization failed: $e');
       rethrow;
     }
   }
@@ -137,16 +137,16 @@ final class BleDevice<T> extends TimDevice {
 
   Future<void> _initDeviceInfo() async {
     try {
-      Logger.i('Device $id reading information...');
+      Logger.i('Device reading information...');
       final info = await initializeDevice(deviceId: id);
       mac = info['mac'] ?? '';
       fv = info['firmware_version'] ?? '';
       pid = info['variant_code'] ?? '';
       batteryValue = int.tryParse(info['battery'] ?? '0') ?? 0;
       batteryController.add(batteryValue);
-      Logger.i('$id device information updated: ${info.toString()}');
+      Logger.i('Device $simpleId device information updated: ${info.toString()}');
     } catch (e) {
-      Logger.e('$id failed to read device information: $e');
+      Logger.e('Device $simpleId failed to read device information: $e');
       throw TimError.peripheralInfoIncomplete.exception();
     }
   }
@@ -165,7 +165,7 @@ final class BleDevice<T> extends TimDevice {
 
     while (retryCount <= maxRetries) {
       try {
-        Logger.i('$id connecting... (attempt ${retryCount + 1}/${maxRetries + 1})');
+        Logger.i('Device $simpleId connecting... (attempt ${retryCount + 1}/${maxRetries + 1})');
 
         await _device.connect(autoConnect: autoConnect, mtu: mtu, timeout: timeout);
 
@@ -175,14 +175,14 @@ final class BleDevice<T> extends TimDevice {
         // 初始化设备（包括服务发现和队列初始化）
         await init();
 
-        Logger.i('$id connection and initialization completed');
+        Logger.i('Device $simpleId connection and initialization completed');
         return; // 成功连接，退出重试循环
       } catch (e) {
         retryCount++;
 
         // 如果是最后一次尝试，抛出异常
         if (retryCount > maxRetries) {
-          Logger.e('$id connection failed after $maxRetries retries');
+          Logger.e('Device $simpleId connection failed after $maxRetries retries');
           throw TimException.fromException(e);
         }
 
@@ -193,19 +193,19 @@ final class BleDevice<T> extends TimDevice {
         final exception = TimException.fromException(e);
         if (exception.error == TimError.connectionTimeout || exception.error == TimError.peripheralBusy) {
           Logger.i(
-            '$id ${exception.error}, '
+            'Device $simpleId ${exception.error}, '
             'retrying in ${delay.inSeconds} seconds...',
           );
           await Future.delayed(delay);
           continue;
         } else if (exception.error == TimError.peripheralNotFound) {
-          Logger.e('$id device not found, stopping retries');
+          Logger.e('Device $simpleId device not found, stopping retries');
           throw exception;
         }
 
         // 其他错误，等待后重试
         Logger.i(
-          '$id unknown error, '
+          'Device $simpleId unknown error, '
           'retrying in ${delay.inSeconds} seconds...',
         );
         await Future.delayed(delay);
@@ -218,12 +218,12 @@ final class BleDevice<T> extends TimDevice {
     _connectionSubscription?.cancel();
     _connectionSubscription = _device.connectionState.listen((state) {
       if (state == BluetoothConnectionState.disconnected) {
-        Logger.i('$id connection state update: disconnected');
+        Logger.i('Device $simpleId connection state update: disconnected');
         isConnected = false;
         connectionController.add(false);
         _handleDisconnection();
       } else {
-        Logger.i('$id connection state update: connected');
+        Logger.i('Device $simpleId connection state update: connected');
         isConnected = true;
         connectionController.add(true);
         startRssiMonitoring();
@@ -235,9 +235,9 @@ final class BleDevice<T> extends TimDevice {
     try {
       _clearResources();
       await removeDeviceTaskStream(deviceId: id);
-      Logger.i('$id disconnection handled');
+      Logger.i('Device $simpleId disconnection handled');
     } catch (e) {
-      Logger.e('$id disconnection handling failed: $e');
+      Logger.e('Device $simpleId disconnection handling failed: $e');
     }
   }
 
@@ -268,7 +268,7 @@ final class BleDevice<T> extends TimDevice {
       }
 
       if (listEquals(_prevPwmValues ?? [], pwmValues)) {
-        Logger.d('$id motor control skipped: pwmValues unchanged');
+        Logger.d('Device $simpleId motor control skipped: pwmValues unchanged');
         return;
       } else {
         _prevPwmValues = pwmValues;
@@ -279,7 +279,7 @@ final class BleDevice<T> extends TimDevice {
         pwmValues: pwmValues,
       );
     } catch (e) {
-      Logger.e('$id write motor failed: $e');
+      Logger.e('Device $simpleId write motor failed: $e');
       throw TimException.fromException(e);
     }
   }
@@ -387,7 +387,7 @@ final class BleDevice<T> extends TimDevice {
         await _device.readRssi();
         // RSSI 设置暂时注释，因为 DeviceInfo 可能没有 rssi 字段
       } catch (e) {
-        Logger.w('$id RSSI monitoring failed: $e');
+        Logger.w('Device $simpleId RSSI monitoring failed: $e');
       }
     });
   }
@@ -409,9 +409,9 @@ final class BleDevice<T> extends TimDevice {
       // 使用统一的断开处理逻辑
       await _handleDisconnection();
 
-      Logger.i('$id disconnected (active)');
+      Logger.i('Device $simpleId disconnected (active)');
     } catch (e) {
-      Logger.e('$id disconnect failed: $e');
+      Logger.e('Device $simpleId disconnect failed: $e');
       throw TimException.fromException(e);
     }
   }
@@ -420,5 +420,28 @@ final class BleDevice<T> extends TimDevice {
   void dispose() {
     _clearResources();
     // super.dispose(); // 暂时注释，因为父类可能没有 dispose 方法
+  }
+
+  String get simpleId {
+    // id有可能是mac和uuid，该方法是打印日志时调用，需要缩短UUID、Mac的显示
+    if (id.contains(':')) {
+      // 可能是MAC地址，形如 "XX:XX:XX:XX:XX:XX"
+      // 缩写为前2组和后2组
+      final parts = id.split(':');
+      if (parts.length == 6) {
+        return '${parts[0]}:${parts[1]}...${parts[4]}:${parts[5]}';
+      } else if (parts.length > 2) {
+        return '${parts.first}:${parts[1]}...${parts[parts.length - 2]}:${parts.last}';
+      }
+    }
+    // 如果看起来是UUID（带-），只保留前8位和后4位
+    if (id.length > 12 && id.contains('-')) {
+      return '${id.substring(0, 2)}...${id.substring(id.length - 4)}';
+    }
+    // 太长的纯ID，也缩短显示（前6后4）
+    if (id.length > 12) {
+      return '${id.substring(0, 6)}...${id.substring(id.length - 4)}';
+    }
+    return id;
   }
 }

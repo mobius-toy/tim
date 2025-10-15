@@ -34,14 +34,15 @@ class Logger {
         ':'
         '${now.millisecond.toString().padLeft(3, '0')}';
     final color = _logLevelColors[level] ?? _logLevelColors[_LogLevel.debug];
-    final output = kDebugMode ? '$dt $color[TIM-${level.value}] $s \x1B[0m' : '$dt [TIM-${level.value}] $s';
+    final coloredOutput = '$dt $color[TIM-${level.value}] $s \x1B[0m';
+    final simpleOutput = '$dt [TIM-${level.value}] $s';
 
-    if (level != _LogLevel.debug) {
-      _logsController.add(output);
+    if (_logsController.hasListener) {
+      _logsController.add(simpleOutput);
     }
 
     if (kDebugMode) {
-      print(output);
+      print(coloredOutput);
     }
   }
 
