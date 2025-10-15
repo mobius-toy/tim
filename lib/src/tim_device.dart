@@ -6,12 +6,12 @@ import 'tim_exception.dart';
 abstract class TimDevice with BaseBleDevice {
   late final String id;
   late final String name;
-  late final String mac;
 
+  late String mac;
   // 固件版本
-  late final String fv;
+  late String fv;
   // 产品ID
-  late final String pid;
+  late String pid;
 
   late bool isConnected;
   Stream<bool> get connection => connectionController.stream;

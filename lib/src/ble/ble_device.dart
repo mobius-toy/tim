@@ -24,6 +24,9 @@ final class BleDevice<T> extends TimDevice {
     isConnected = false;
     rssiValue = 0;
     batteryValue = 0;
+    mac = '';
+    fv = '';
+    pid = '';
   }
 
   /// 获取蓝牙设备

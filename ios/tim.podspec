@@ -2,13 +2,21 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
 # Run `pod lib lint tim.podspec` to validate before publishing.
 #
-tim_frb_version = ENV['TIM_FRB_VERSION'] || '0.0.1'
+
+env_file_path = File.join(__dir__, '..', 'tim_frb_version.env')
+if File.exist?(env_file_path)
+  env_content = File.read(env_file_path)
+  version_match = env_content.match(/TIM_FRB_VERSION=(\d+\.\d+\.\d+)/)
+  tim_frb_version = version_match ? version_match[1] : '0.0.1'
+end
+
 tim_frb_archive = "tim_frb-artifacts-v#{tim_frb_version}.zip"
 tim_frb_url = "https://github.com/mobius-toy/tim_artifacts/releases/download/v#{tim_frb_version}/#{tim_frb_archive}"
 
+
 Pod::Spec.new do |s|
   s.name             = 'tim'
-  s.version          = '0.0.1'
+  s.version          = tim_frb_version
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
 A new Flutter plugin project.

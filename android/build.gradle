@@ -1,7 +1,16 @@
 group = "com.mobius.tim"
 version = "1.0-SNAPSHOT"
 
-def timFrbVersion = project.findProperty("timFrbVersion") ?: "0.0.1"
+def timFrbVersion = "0.0.2" // 默认版本
+def envFile = new File(projectDir.parentFile, "tim_frb_version.env")
+if (envFile.exists()) {
+    def envContent = envFile.text
+    def versionMatch = envContent =~ /TIM_FRB_VERSION=(\d+\.\d+\.\d+)/
+    if (versionMatch) {
+        timFrbVersion = versionMatch[0][1]
+    }
+}
+
 def timFrbArchiveName = "tim_frb-artifacts-v${timFrbVersion}.zip"
 def timFrbDownloadUrl = "https://github.com/mobius-toy/tim_artifacts/releases/download/v${timFrbVersion}/${timFrbArchiveName}"
 def timFrbWorkDir = new File(buildDir, "timFrb")
