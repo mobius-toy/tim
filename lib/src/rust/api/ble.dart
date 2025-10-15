@@ -5,8 +5,13 @@
 
 import '../frb_generated.dart';
 import 'cmd.dart';
+import 'log.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'task.dart';
+
+/// 创建日志流
+Stream<LogEntry> createLogStream() =>
+    RustLib.instance.api.crateApiBleCreateLogStream();
 
 String initDeviceRegistry() =>
     RustLib.instance.api.crateApiBleInitDeviceRegistry();

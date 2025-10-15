@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'ble/ble_device.dart';
 import 'rust/api/ble.dart';
@@ -34,7 +34,7 @@ class TimService {
 
     Logger.i('Initialize service');
 
-    FlutterBluePlus.setLogLevel(LogLevel.none);
+    fbp.FlutterBluePlus.setLogLevel(fbp.LogLevel.none);
     _listenAdapterState();
 
     ExternalLibrary? externalLibrary;
@@ -42,9 +42,13 @@ class TimService {
       externalLibrary = ExternalLibrary.process(iKnowHowToUseIt: true);
     }
 
-    await RustLib.init(externalLibrary: externalLibrary);
+    try {
+      await RustLib.init(externalLibrary: externalLibrary);
 
-    initDeviceRegistry();
+      initDeviceRegistry();
+    } catch (e) {
+      Logger.e('init TimService failed. $e');
+    }
 
     _initialized = true;
 
@@ -52,15 +56,15 @@ class TimService {
   }
 
   void _listenAdapterState() {
-    FlutterBluePlus.adapterState.listen((s) {
+    fbp.FlutterBluePlus.adapterState.listen((s) {
       final state = switch (s) {
-        BluetoothAdapterState.unknown => TimState.unknown,
-        BluetoothAdapterState.unavailable => TimState.unavailable,
-        BluetoothAdapterState.unauthorized => TimState.unauthorized,
-        BluetoothAdapterState.turningOn => null,
-        BluetoothAdapterState.on => TimState.on,
-        BluetoothAdapterState.turningOff => null,
-        BluetoothAdapterState.off => TimState.off,
+        fbp.BluetoothAdapterState.unknown => TimState.unknown,
+        fbp.BluetoothAdapterState.unavailable => TimState.unavailable,
+        fbp.BluetoothAdapterState.unauthorized => TimState.unauthorized,
+        fbp.BluetoothAdapterState.turningOn => null,
+        fbp.BluetoothAdapterState.on => TimState.on,
+        fbp.BluetoothAdapterState.turningOff => null,
+        fbp.BluetoothAdapterState.off => TimState.off,
       };
 
       if (state != null) {
@@ -72,7 +76,7 @@ class TimService {
   }
 
   // Get or create device instance
-  TimDevice _getOrCreateDevice({ScanResult? scanResult, String? remoteId}) {
+  TimDevice _getOrCreateDevice({fbp.ScanResult? scanResult, String? remoteId}) {
     final key = scanResult?.device.remoteId.str ?? remoteId;
 
     assert(scanResult != null || remoteId != null);
@@ -84,11 +88,11 @@ class TimService {
     if (scanResult != null) {
       return _deviceCache[key!] = BleDevice(scanResult.device);
     } else {
-      return _deviceCache[key!] = BleDevice(BluetoothDevice.fromId(key));
+      return _deviceCache[key!] = BleDevice(fbp.BluetoothDevice.fromId(key));
     }
   }
 
-  Future stopScan() async => await FlutterBluePlus.stopScan();
+  Future stopScan() async => await fbp.FlutterBluePlus.stopScan();
 
   /// Scan Bluetooth devices
   ///
@@ -100,8 +104,8 @@ class TimService {
     List<String> withNames = const [],
     OnScanCallback? onFoundDevices,
   }) async {
-    if (FlutterBluePlus.isScanningNow) {
-      await FlutterBluePlus.stopScan();
+    if (fbp.FlutterBluePlus.isScanningNow) {
+      await fbp.FlutterBluePlus.stopScan();
     }
 
     final completer = Completer<List<TimDevice>>();
@@ -119,7 +123,7 @@ class TimService {
         deadline = null;
       } catch (_) {}
       try {
-        await FlutterBluePlus.stopScan();
+        await fbp.FlutterBluePlus.stopScan();
       } catch (_) {}
 
       if (!completer.isCompleted) {
@@ -127,7 +131,7 @@ class TimService {
       }
     }
 
-    sub = FlutterBluePlus.onScanResults.listen((results) {
+    sub = fbp.FlutterBluePlus.onScanResults.listen((results) {
       devices.clear();
       for (var result in results) {
         devices.add(_getOrCreateDevice(scanResult: result));
@@ -149,7 +153,7 @@ class TimService {
       Logger.i('start scan, timeout=${timeout.inSeconds}, names=${withNames.join(' | ')}');
 
       int divisor = Platform.isAndroid ? 8 : 1;
-      await FlutterBluePlus.startScan(
+      await fbp.FlutterBluePlus.startScan(
         continuousUpdates: false,
         continuousDivisor: divisor,
         oneByOne: false,

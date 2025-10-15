@@ -1,6 +1,6 @@
 name: tim
-description: "A new Flutter plugin project."
-version: 0.0.2
+description: "TIM 是一个面向 BLE 智能硬件的高性能跨平台 Flutter 控制插件，支持 Android、iOS、macOS。"
+version: 0.0.3
 homepage:
 
 environment:

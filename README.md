@@ -38,7 +38,7 @@ TIM 是一个完整的 Flutter 插件包，提供智能设备控制的核心功�
 | **Dart SDK** | 3.9.2 | 3.2.0+ | 与Flutter版本对应 |
 | **Android** | API 24 (7.0) | API 33+ | TIM SDK 实际要求的最低版本 |
 | **iOS** | 13.0 | 15.0+ | TIM SDK 实际要求的最低版本 |
-| **macOS** | 10.11 | 12.0+ | TIM SDK 实际要求的最低版本 |
+| **macOS** | 10.15 | 12.0+ | TIM SDK 实际要求的最低版本 |
 
 #### 平台特定工具链
 
@@ -49,7 +49,7 @@ TIM 是一个完整的 Flutter 插件包，提供智能设备控制的核心功�
 - **iOS/macOS**: 
   - Xcode 14.0+
   - iOS Deployment Target 13.0+
-  - macOS Deployment Target 10.11+
+  - macOS Deployment Target 10.15+
 
 ### 蓝牙权限设置
 
@@ -331,7 +331,7 @@ platform :ios, '13.0'  # TIM SDK 实际要求的最低版本
 在 `macos/Podfile` 中设置最低版本：
 
 ```ruby
-platform :osx, '10.11'  # TIM SDK 实际要求的最低版本
+platform :osx, '10.15'  # TIM SDK 实际要求的最低版本
 ```
 
 ## 📄 许可证
