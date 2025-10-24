@@ -33,9 +33,7 @@ abstract class TimDevice with BaseBleDevice {
   Future<void> writeMotorStop();
 
   Future ota({
-    required String platform,
-    required String remoteID,
-    required String filepath,
+    required List<int> firmwareData,
     required ValueChanged<double> onProgress,
   }) => throw UnimplementedError();
 

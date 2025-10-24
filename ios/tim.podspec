@@ -47,7 +47,7 @@ A new Flutter plugin project.
       TEMP_ZIP="${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
       UNPACK_DIR="${ARTIFACTS_DIR}/tim_frb_unpack"
 
-      if [ ! -f "${TARGET_LIB}" ]; then
+      # if [ ! -f "${TARGET_LIB}" ]; then
         echo "Downloading TIM artifacts to ${TARGET_LIB}"
         mkdir -p "${ARTIFACTS_DIR}"
         curl -L -o "${TEMP_ZIP}" "${URL}"
@@ -62,7 +62,7 @@ A new Flutter plugin project.
         cp "${EXPECTED_LIB}" "${TARGET_LIB}"
         rm -rf "${UNPACK_DIR}"
         rm -f "${TEMP_ZIP}"
-      fi
+      # fi
     SCRIPT
     :output_files => ["${BUILT_PRODUCTS_DIR}/libtim_frb.a"],
   }

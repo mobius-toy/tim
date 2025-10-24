@@ -45,6 +45,24 @@ enum TimError {
   ),
   otaFileDataEmpty(
     'The specified OTA firmware data is empty.',
+  ),
+  otaAlreadyInProgress(
+    'OTA update is already in progress for this device.',
+  ),
+  otaNotInProgress(
+    'No OTA update is currently in progress for this device.',
+  ),
+  otaTransmissionFailed(
+    'OTA data transmission failed.',
+  ),
+  otaCrcError(
+    'OTA data CRC verification failed.',
+  ),
+  otaTimeout(
+    'OTA operation timed out.',
+  ),
+  otaDeviceNotConnected(
+    'Device is not connected for OTA operation.',
   );
 
   final String message;

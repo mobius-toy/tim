@@ -1,7 +1,7 @@
 group = "com.mobius.tim"
 version = "1.0-SNAPSHOT"
 
-def timFrbVersion = "0.0.2" // 默认版本
+def timFrbVersion = "0.0.3" // 默认版本
 def envFile = new File(projectDir.parentFile, "tim_frb_version.env")
 if (envFile.exists()) {
     def envContent = envFile.text

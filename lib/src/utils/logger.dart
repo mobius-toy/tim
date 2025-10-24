@@ -37,7 +37,7 @@ class Logger {
     final coloredOutput = '$dt $color[TIM-${level.value}] $s \x1B[0m';
     final simpleOutput = '$dt [TIM-${level.value}] $s';
 
-    if (_logsController.hasListener) {
+    if (level != _LogLevel.debug) {
       _logsController.add(simpleOutput);
     }
 

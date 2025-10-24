@@ -1,6 +1,6 @@
 # TIM - Tactile Interaction Module（触觉交互模块）
 
-[![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)](https://github.com/mobius-toy/tim)
+[![Version](https://img.shields.io/badge/version-0.0.4-blue.svg)](https://github.com/mobius-toy/tim)
 [![Flutter](https://img.shields.io/badge/flutter-%5E3.3.0-blue.svg)](https://flutter.dev/)
 [![License](https://img.shields.io/badge/license-Dual-blue.svg)](LICENSE)
 
@@ -111,7 +111,7 @@ dependencies:
   tim:
     git:
       url: https://github.com/mobius-toy/tim.git
-      ref: v0.0.2
+      ref: v0.0.4
   permission_handler: ^11.3.1  # 用于权限管理
   device_info_plus: ^10.1.0    # 用于检测Android版本
 
@@ -123,7 +123,7 @@ environment:
 
 #### 版本兼容性
 
-- **TIM v0.0.2**: 支持 Flutter 3.3.0+ 和 Dart 3.9.2+
+- **TIM v0.0.4**: 支持 Flutter 3.3.0+ 和 Dart 3.9.2+
 - **permission_handler v11.3.1**: 需要 Flutter 3.0.0+ 支持
 - **device_info_plus v10.1.0**: 用于检测Android版本，支持所有平台
 - **flutter_blue_plus v1.35.5**: TIM内部依赖，自动管理版本

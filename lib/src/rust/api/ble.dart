@@ -25,6 +25,10 @@ Stream<BleTask> createDeviceTaskStream({
   deviceName: deviceName,
 );
 
+/// 销毁设备（设置断开状态并清理资源）
+Future<String> destroyDevice({required String deviceId}) =>
+    RustLib.instance.api.crateApiBleDestroyDevice(deviceId: deviceId);
+
 /// 移除设备任务流
 Future<String> removeDeviceTaskStream({required String deviceId}) =>
     RustLib.instance.api.crateApiBleRemoveDeviceTaskStream(deviceId: deviceId);

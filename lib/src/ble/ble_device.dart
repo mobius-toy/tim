@@ -4,6 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../rust/api/ble.dart';
 import '../rust/api/cmd.dart';
 import '../rust/api/task.dart';
+import '../rust/api/ota.dart';
 import '../tim_exception.dart';
 import '../tim_device.dart';
 import '../utils/logger.dart';
@@ -234,6 +235,7 @@ final class BleDevice<T> extends TimDevice {
   Future<void> _handleDisconnection() async {
     try {
       _clearResources();
+      await destroyDevice(deviceId: id);
       await removeDeviceTaskStream(deviceId: id);
       Logger.i('Device $simpleId disconnection handled');
     } catch (e) {
@@ -296,6 +298,50 @@ final class BleDevice<T> extends TimDevice {
       await writeDeviceMotorStop(deviceId: id);
     } catch (e) {
       Logger.e('Device write motor stop failed: $e');
+      throw TimException.fromException(e);
+    }
+  }
+
+  /// OTA升级
+  @override
+  Future<void> ota({
+    required List<int> firmwareData,
+    required ValueChanged<double> onProgress,
+  }) async {
+    if (!_device.isConnected) {
+      Logger.w('Device OTA failed: device not connected');
+      throw TimError.otaDeviceNotConnected.exception();
+    }
+
+    try {
+      Logger.i('Starting OTA (async) for device $simpleId');
+
+      // 检查固件数据
+      if (firmwareData.isEmpty) {
+        Logger.e('OTA firmware data is empty');
+        throw TimError.otaFileDataEmpty.exception();
+      }
+
+      Logger.i('OTA firmware data loaded: ${firmwareData.length} bytes');
+
+      // 使用异步版本启动OTA
+      final progressStream = startTelinkOtaWithProgress(
+        deviceId: id,
+        firmwareData: firmwareData,
+      );
+
+      // 监听进度流
+      await for (final progress in progressStream) {
+        Logger.d('OTA progress: ${(progress * 100).toStringAsFixed(1)}%');
+        onProgress(progress);
+
+        if (progress >= 1.0) {
+          Logger.i('OTA completed for device $simpleId');
+          break;
+        }
+      }
+    } catch (e) {
+      Logger.e('Device OTA failed: $e');
       throw TimException.fromException(e);
     }
   }
@@ -406,9 +452,6 @@ final class BleDevice<T> extends TimDevice {
       // 先断开蓝牙连接
       await _device.disconnect();
 
-      // 使用统一的断开处理逻辑
-      await _handleDisconnection();
-
       Logger.i('Device $simpleId disconnected (active)');
     } catch (e) {
       Logger.e('Device $simpleId disconnect failed: $e');
@@ -436,7 +479,7 @@ final class BleDevice<T> extends TimDevice {
     }
     // 如果看起来是UUID（带-），只保留前8位和后4位
     if (id.length > 12 && id.contains('-')) {
-      return '${id.substring(0, 2)}...${id.substring(id.length - 4)}';
+      return '${id.substring(0, 8)}...${id.substring(id.length - 4)}';
     }
     // 太长的纯ID，也缩短显示（前6后4）
     if (id.length > 12) {
