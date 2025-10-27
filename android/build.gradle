@@ -1,6 +1,21 @@
 group = "com.mobius.tim"
 version = "1.0-SNAPSHOT"
 
+// ext {
+//     flutter = [
+//         compileSdkVersion: 35,
+//         targetSdkVersion : 35,
+//         minSdkVersion    : 24,
+//         ndkVersion       : "27.0.12077973"
+//     ]
+
+//     // Provide dotted keys for older scripts that look up individual properties.
+//     set("flutter.compileSdkVersion", flutter.compileSdkVersion)
+//     set("flutter.targetSdkVersion", flutter.targetSdkVersion)
+//     set("flutter.minSdkVersion", flutter.minSdkVersion)
+//     set("flutter.ndkVersion", flutter.ndkVersion)
+// }
+
 def timFrbVersion = "0.0.3" // 默认版本
 def envFile = new File(projectDir.parentFile, "tim_frb_version.env")
 if (envFile.exists()) {
@@ -26,6 +41,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.9.1")
+        // classpath "com.android.tools.build:gradle:8.2.2"
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
@@ -45,7 +61,14 @@ android {
 
     compileSdk = project.hasProperty('flutter.compileSdkVersion') 
         ? flutter.compileSdkVersion 
-        : 34
+        : 35
+
+    // def requestedCompileSdk = (project.hasProperty("flutter") && flutter.compileSdkVersion != null)
+    //     ? flutter.compileSdkVersion
+    //     : 35
+    // compileSdk = requestedCompileSdk
+    // ndkVersion = flutter.ndkVersion
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -64,6 +87,13 @@ android {
 
     defaultConfig {
         minSdk = 24
+
+        // minSdk = (project.hasProperty("flutter") && flutter.minSdkVersion != null)
+        //     ? flutter.minSdkVersion
+        //     : 24
+        // if (project.hasProperty("flutter") && flutter.targetSdkVersion != null) {
+        //     targetSdk = flutter.targetSdkVersion
+        // }        
     }
 
     dependencies {

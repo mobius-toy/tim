@@ -1,17 +1,17 @@
 name: tim
 description: "TIM 是一个面向 BLE 智能硬件的高性能跨平台 Flutter 控制插件，支持 Android、iOS、macOS。"
-version: 0.0.5
+version: 0.0.6
 homepage:
 
 environment:
-  sdk: ^3.8.1
-  flutter: '>=3.3.0'
+  sdk: ^3.5.1
+  flutter: '>=3.24.1'
 
 dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  flutter_blue_plus: ^1.35.5
+  flutter_blue_plus: 1.32.12
   flutter_rust_bridge: 2.11.1
 
 dev_dependencies:
