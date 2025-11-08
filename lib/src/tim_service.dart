@@ -83,7 +83,9 @@ class TimService {
 
     if (_deviceCache.containsKey(key)) {
       final device = _deviceCache[key]!;
-      device.name = scanResult?.advertisementData.advName ?? 'Unknown';
+      if (scanResult != null) {
+        device.name = scanResult.advertisementData.advName;
+      }
       return device;
     }
 
