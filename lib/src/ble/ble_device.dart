@@ -296,6 +296,7 @@ final class BleDevice<T> extends TimDevice {
     try {
       Logger.d('Device motor stop request');
       await writeDeviceMotorStop(deviceId: id);
+      _prevPwmValues = null;
     } catch (e) {
       Logger.e('Device write motor stop failed: $e');
       throw TimException.fromException(e);

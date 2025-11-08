@@ -82,7 +82,9 @@ class TimService {
     assert(scanResult != null || remoteId != null);
 
     if (_deviceCache.containsKey(key)) {
-      return _deviceCache[key]!;
+      final device = _deviceCache[key]!;
+      device.name = scanResult?.advertisementData.advName ?? 'Unknown';
+      return device;
     }
 
     if (scanResult != null) {

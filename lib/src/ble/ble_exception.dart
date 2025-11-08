@@ -90,24 +90,23 @@ TimError _handleAppleError(FlutterBluePlusException exception) {
 }
 
 TimError _fromPlatformException(PlatformException exception) => switch (exception.code) {
-  'connect' => TimError.peripheralNotFound,
-  'timeout' => TimError.connectionTimeout,
-  'bluetooth_unavailable' => TimError.bluetoothUnavailable,
-  'bluetooth_state_off' => TimError.bluetoothStateOff,
-  'device_not_found' => TimError.peripheralNotFound,
-  'connection_failed' => TimError.connectionFailed,
-  'device_busy' => TimError.peripheralBusy,
-  'unsupported_feature' => TimError.unsupportedFeature,
-  'invalid_argument' => TimError.peripheralInfoIncomplete,
-  _ => TimError.unknown,
-};
+      'connect' => TimError.peripheralNotFound,
+      'timeout' => TimError.connectionTimeout,
+      'bluetooth_unavailable' => TimError.bluetoothUnavailable,
+      'bluetooth_state_off' => TimError.bluetoothStateOff,
+      'device_not_found' => TimError.peripheralNotFound,
+      'connection_failed' => TimError.connectionFailed,
+      'device_busy' => TimError.peripheralBusy,
+      'unsupported_feature' => TimError.unsupportedFeature,
+      'invalid_argument' => TimError.peripheralInfoIncomplete,
+      _ => TimError.unknown,
+    };
 
 TimError _fromFlutterBlueException(FlutterBluePlusException exception) => switch (exception.platform) {
-  ErrorPlatform.fbp => _handleFbpError(exception),
-  ErrorPlatform.apple => _handleAppleError(exception),
-  ErrorPlatform.android => _handleAndroidError(exception),
-  _ => TimError.unknown,
-};
+      ErrorPlatform.fbp => _handleFbpError(exception),
+      ErrorPlatform.apple => _handleAppleError(exception),
+      ErrorPlatform.android => _handleAndroidError(exception),
+    };
 
 TimException? _fromException(Object exception) {
   if (exception is PlatformException) {

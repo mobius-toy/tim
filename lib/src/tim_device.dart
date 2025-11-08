@@ -5,7 +5,7 @@ import 'tim_exception.dart';
 
 abstract class TimDevice with BaseBleDevice {
   late final String id;
-  late final String name;
+  late String name;
 
   late String mac;
   // 固件版本
@@ -35,7 +35,8 @@ abstract class TimDevice with BaseBleDevice {
   Future ota({
     required List<int> firmwareData,
     required ValueChanged<double> onProgress,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   String toString() {
