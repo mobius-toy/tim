@@ -45,22 +45,53 @@ A new Flutter plugin project.
       TEMP_ZIP="${ARTIFACTS_DIR}/${ARCHIVE_NAME}"
       UNPACK_DIR="${ARTIFACTS_DIR}/tim_frb_unpack"
 
-      # if [ ! -f "${TARGET_LIB}" ]; then
-        echo "Downloading TIM artifacts to ${TARGET_LIB}"
-        mkdir -p "${ARTIFACTS_DIR}"
+      # Determine configuration
+      CONFIG=$(echo "${CONFIGURATION}" | tr '[:upper:]' '[:lower:]')
+      
+      # Map configuration (Debug/Release) to artifacts directory
+      if [ "${CONFIG}" = "debug" ]; then
+        ARTIFACTS_CONFIG="debug"
+      else
+        ARTIFACTS_CONFIG="release"
+      fi
+      
+      EXPECTED_LIB="${UNPACK_DIR}/artifacts/macosx/${ARTIFACTS_CONFIG}/libtim_frb.a"
+      FALLBACK_LIB="${UNPACK_DIR}/artifacts/macosx/release/libtim_frb.a"
+      
+      echo "Downloading TIM artifacts for macOS (${CONFIG}) to ${TARGET_LIB}"
+      echo "Expected library path: ${EXPECTED_LIB}"
+      
+      mkdir -p "${ARTIFACTS_DIR}"
+      # Use proxy if available
+      if [ -n "${https_proxy:-}" ] || [ -n "${HTTPS_PROXY:-}" ]; then
+        PROXY="${https_proxy:-${HTTPS_PROXY:-}}"
+        curl -L --proxy "${PROXY}" -o "${TEMP_ZIP}" "${URL}"
+      else
         curl -L -o "${TEMP_ZIP}" "${URL}"
-        rm -rf "${UNPACK_DIR}"
-        mkdir -p "${UNPACK_DIR}"
-        unzip -o "${TEMP_ZIP}" -d "${UNPACK_DIR}"
-        EXPECTED_LIB="${UNPACK_DIR}/artifacts/macosx/release/libtim_frb.a"
-        if [ ! -f "${EXPECTED_LIB}" ]; then
-          echo "Error: "${EXPECTED_LIB}" not found inside artifacts archive"
-          exit 1
-        fi
-        cp "${EXPECTED_LIB}" "${TARGET_LIB}"
-        rm -rf "${UNPACK_DIR}"
-        rm -f "${TEMP_ZIP}"
-      # fi
+      fi
+      rm -rf "${UNPACK_DIR}"
+      mkdir -p "${UNPACK_DIR}"
+      unzip -o "${TEMP_ZIP}" -d "${UNPACK_DIR}"
+      
+      # Try to use the expected library, fallback to release if not found
+      if [ -f "${EXPECTED_LIB}" ]; then
+        SELECTED_LIB="${EXPECTED_LIB}"
+        echo "Using ${ARTIFACTS_CONFIG} build: ${SELECTED_LIB}"
+      elif [ -f "${FALLBACK_LIB}" ]; then
+        SELECTED_LIB="${FALLBACK_LIB}"
+        echo "Warning: ${ARTIFACTS_CONFIG} build not found, using release build: ${SELECTED_LIB}"
+      else
+        echo "Error: Neither ${EXPECTED_LIB} nor ${FALLBACK_LIB} found inside artifacts archive"
+        echo "Available files in archive:"
+        find "${UNPACK_DIR}" -name "libtim_frb.a" || echo "No libtim_frb.a found"
+        exit 1
+      fi
+      
+      cp "${SELECTED_LIB}" "${TARGET_LIB}"
+      rm -rf "${UNPACK_DIR}"
+      rm -f "${TEMP_ZIP}"
+      
+      echo "Successfully copied ${SELECTED_LIB} to ${TARGET_LIB}"
     SCRIPT
     :output_files => ["${BUILT_PRODUCTS_DIR}/libtim_frb.a"],
   }
